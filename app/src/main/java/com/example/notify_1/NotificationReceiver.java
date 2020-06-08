@@ -20,11 +20,11 @@ public class NotificationReceiver extends BroadcastReceiver {
 //        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
 
         //For Channel-5
-        Bundle bundle=RemoteInput.getResultsFromIntent(intent);
-        if(bundle!=null){
+        Bundle bundle = RemoteInput.getResultsFromIntent(intent);
+        if (bundle != null) {
             //Should actually use extractMessagingStyleFromNotification() or use database..
-            CharSequence replyText=bundle.getCharSequence(KEY_REMOTE_INPUT);
-            Message reply=new Message(replyText,USER_NAME);
+            CharSequence replyText = bundle.getCharSequence(KEY_REMOTE_INPUT);
+            Message reply = new Message(replyText, USER_NAME);
             MainActivity.MESSAGES.add(reply);
 
             MainActivity.sendMessageChannel(context);

@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static final int NOTIFICATION_INTENT = 1;
     public static final String KEY_REMOTE_INPUT = "key_remote_input";
-    public static final String USER_NAME="ME";
+    public static final String USER_NAME = "ME";
 
     //NotificationManagerCompat used here to allow backwards compatibility.
     NotificationManagerCompat notificationManagerCompat;
@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
     private MediaSessionCompat mediaSessionCompat;
 
-    static List<Message> MESSAGES=new ArrayList<>();
+    static List<Message> MESSAGES = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,10 +55,10 @@ public class MainActivity extends AppCompatActivity {
         mediaSessionCompat = new MediaSessionCompat(this, "TAG");
         notificationManagerCompat = NotificationManagerCompat.from(this);
 
-        MESSAGES.add(new Message("Hello!!!","JAM"));
-        MESSAGES.add(new Message("Hello2!!!","JAM"));
-        MESSAGES.add(new Message("How r u??!!!",USER_NAME));
-        MESSAGES.add(new Message("We r fine..U??","HARRY"));
+        MESSAGES.add(new Message("Hello!!!", "JAM"));
+        MESSAGES.add(new Message("Hello2!!!", "JAM"));
+        MESSAGES.add(new Message("How r u??!!!", USER_NAME));
+        MESSAGES.add(new Message("We r fine..U??", "HARRY"));
     }
 
     public void sendOnChannel1(View v) {
@@ -119,6 +119,12 @@ public class MainActivity extends AppCompatActivity {
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .build();
         notificationManagerCompat.notify(2, notification);
+        //Can use different id for more of same notifications...as number of notifications>4
+        // notification group would be formed by default for api>N
+        /**for (int i = 0; i <5 ; i++) {
+         SystemClock.sleep(2000);
+         notificationManagerCompat.notify(i, notification);
+         }**/
     }
 
     public void sendOnChannel3(View v) {
@@ -163,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
         notificationManagerCompat.notify(4, notification);
     }
 
-    public void sendOnChannel5(View v){
+    public void sendOnChannel5(View v) {
         sendMessageChannel(this);
     }
 
@@ -173,22 +179,21 @@ public class MainActivity extends AppCompatActivity {
         Intent activityIntent = new Intent(context, MainActivity.class);
         PendingIntent contentIntent = PendingIntent.getActivity(context, NOTIFICATION_INTENT, activityIntent, 0);
 
-        RemoteInput remoteInput=new RemoteInput.Builder(KEY_REMOTE_INPUT)
+        RemoteInput remoteInput = new RemoteInput.Builder(KEY_REMOTE_INPUT)
                 .setLabel("Your reply....")
                 .build();
 
         Intent replyIntent;
-        PendingIntent replyPendingIntent =null;
-        if(Build.VERSION.SDK_INT>-Build.VERSION_CODES.N){
-            replyIntent=new Intent(context,NotificationReceiver.class);
-            replyPendingIntent =PendingIntent.getBroadcast(context,NOTIFICATION_INTENT,replyIntent,0);
-        }
-        else{
+        PendingIntent replyPendingIntent = null;
+        if (Build.VERSION.SDK_INT > -Build.VERSION_CODES.N) {
+            replyIntent = new Intent(context, NotificationReceiver.class);
+            replyPendingIntent = PendingIntent.getBroadcast(context, NOTIFICATION_INTENT, replyIntent, 0);
+        } else {
             //start chat Activity instead(PendingIntent.getActivity)
             //cancel notification with notificationManagerCompat.cancel(id)
         }
 
-        NotificationCompat.Action replyAction=new NotificationCompat.Action.Builder(
+        NotificationCompat.Action replyAction = new NotificationCompat.Action.Builder(
                 R.drawable.ic_next,
                 "REPLY",
                 replyPendingIntent
@@ -197,11 +202,11 @@ public class MainActivity extends AppCompatActivity {
         Person user = new Person.Builder()
                 .setName("ME")
                 .build();
-        NotificationCompat.MessagingStyle messagingStyle=new NotificationCompat.MessagingStyle(user);
+        NotificationCompat.MessagingStyle messagingStyle = new NotificationCompat.MessagingStyle(user);
         messagingStyle.setConversationTitle("GROUP CHAT");
 
-        for (Message message:MESSAGES){
-            NotificationCompat.MessagingStyle.Message notification_message=new NotificationCompat.MessagingStyle.Message(
+        for (Message message : MESSAGES) {
+            NotificationCompat.MessagingStyle.Message notification_message = new NotificationCompat.MessagingStyle.Message(
                     message.getText(),
                     message.getTimestamp(),
                     message.getSender()
@@ -217,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setContentIntent(contentIntent)
                 .build();
-        NotificationManagerCompat notificationManagerCompat=NotificationManagerCompat.from(context);
+        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
         notificationManagerCompat.notify(5, notification);
     }
 
@@ -248,5 +253,45 @@ public class MainActivity extends AppCompatActivity {
                 notificationManagerCompat.notify(6, notification.build());
             }
         }).start();
+    }
+
+    public void sendOnChannel7(View v) {
+        //For lower level api<N
+        String title1 = "Title 1";
+        String message1 = "Message 1";
+        String title2 = "Title 2";
+        String message2 = "Message 2";
+        Notification notification1 = new NotificationCompat.Builder(this, CHANNEL_2_ID)
+                .setSmallIcon(R.drawable.ic_two)
+                .setContentTitle(title1)
+                .setContentText(message1)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setGroup("example_group")
+                .build();
+        Notification notification2 = new NotificationCompat.Builder(this, CHANNEL_2_ID)
+                .setSmallIcon(R.drawable.ic_two)
+                .setContentTitle(title2)
+                .setContentText(message2)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setGroup("example_group")
+                .build();
+        Notification summaryNotification = new NotificationCompat.Builder(this, CHANNEL_2_ID)
+                .setSmallIcon(R.drawable.ic_one)
+                .setStyle(new NotificationCompat.InboxStyle()
+                        .addLine(title2 + " " + message2)
+                        .addLine(title1 + " " + message1)
+                        .setBigContentTitle("2 new messages")
+                        .setSummaryText("user@example.com"))
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setGroup("example_group")
+                .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_CHILDREN)
+                .setGroupSummary(true)
+                .build();
+        SystemClock.sleep(2000);
+        notificationManagerCompat.notify(2, notification1);
+        SystemClock.sleep(2000);
+        notificationManagerCompat.notify(3, notification2);
+        SystemClock.sleep(2000);
+        notificationManagerCompat.notify(4, summaryNotification);
     }
 }

@@ -56,4 +56,10 @@
         android:onClick="sendOnChannel6"
         android:text="PROGRESS NOTIFICATION" />
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="sendOnChannel7"
+        android:text="NOTIFICATION GROUP ON OLDER API" />
+
 </LinearLayout>
