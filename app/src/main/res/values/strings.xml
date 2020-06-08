@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Notify-1</string>
+    <string name="big_text">Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+        Eaque error fugit necessitatibus officia rem sit tempore, vitae! Dolores eaque
+        enim incidunt quae reiciendis! Exercitationem, libero sed soluta tempora
+        temporibus velit.Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+        Eaque error fugit necessitatibus officia rem sit tempore, vitae! Dolores eaque
+        enim incidunt quae reiciendis! Exercitationem, libero sed soluta tempora
+        temporibus velit.</string>
 </resources>
