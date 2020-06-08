@@ -50,4 +50,10 @@
         android:onClick="sendOnChannel5"
         android:text="MESSAGING STYLE" />
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="sendOnChannel6"
+        android:text="PROGRESS NOTIFICATION" />
+
 </LinearLayout>

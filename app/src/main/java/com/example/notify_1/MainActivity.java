@@ -15,6 +15,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.view.View;
 import android.widget.EditText;
@@ -218,5 +219,34 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         NotificationManagerCompat notificationManagerCompat=NotificationManagerCompat.from(context);
         notificationManagerCompat.notify(5, notification);
+    }
+
+    public void sendOnChannel6(View v) {
+        final int progressMax = 100;
+        //THis allows us to change notification attributes.
+        final NotificationCompat.Builder notification = new NotificationCompat.Builder(this, CHANNEL_2_ID)
+                .setSmallIcon(R.drawable.ic_two)
+                .setContentTitle("Download")
+                .setContentText("Download in progress")
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setOngoing(true)
+                .setOnlyAlertOnce(true)
+                .setProgress(progressMax, 0, false);
+        notificationManagerCompat.notify(6, notification.build());
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                SystemClock.sleep(2000);
+                for (int progress = 0; progress <= progressMax; progress += 10) {
+                    notification.setProgress(progressMax, progress, false);
+                    notificationManagerCompat.notify(6, notification.build());
+                    SystemClock.sleep(1000);
+                }
+                notification.setContentText("Download finished")
+                        .setProgress(0, 0, false)
+                        .setOngoing(false);
+                notificationManagerCompat.notify(6, notification.build());
+            }
+        }).start();
     }
 }
