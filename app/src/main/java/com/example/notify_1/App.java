@@ -10,6 +10,7 @@ public class App extends Application {
     public static final String CHANNEL_2_ID="CHANNEL 2";
     public static final String CHANNEL_3_ID="CHANNEL 3";
     public static final String CHANNEL_4_ID="CHANNEL 4";
+    public static final String CHANNEL_5_ID="CHANNEL 5";
 
     @Override
     public void onCreate() {
@@ -39,6 +40,11 @@ public class App extends Application {
                     NotificationManager.IMPORTANCE_LOW);
             channel2.setDescription("THIS IS CHANNEL 4.");
 
+            NotificationChannel channel5 = new NotificationChannel(CHANNEL_5_ID,
+                    "Channel 5",
+                    NotificationManager.IMPORTANCE_HIGH);
+            channel2.setDescription("THIS IS CHANNEL 5.");
+
 
             //To register channels in api>=26
             NotificationManager notificationManager=getSystemService(NotificationManager.class);
@@ -46,6 +52,7 @@ public class App extends Application {
             notificationManager.createNotificationChannel(channel2);
             notificationManager.createNotificationChannel(channel3);
             notificationManager.createNotificationChannel(channel4);
+            notificationManager.createNotificationChannel(channel5);
         }
     }
 }

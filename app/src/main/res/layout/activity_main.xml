@@ -24,24 +24,30 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="sendOnChannel1"
-        android:text="Send on Channel 1" />
+        android:text="BIG TEXT STYLE" />
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="sendOnChannel2"
-        android:text="Send on Channel 2" />
+        android:text="INBOX STYLE" />
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="sendOnChannel3"
-        android:text="Send on Channel 3" />
+        android:text="BIG PICTURE STYLE" />
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="sendOnChannel4"
-        android:text="Send on Channel 4" />
+        android:text="MEDIA STYLE" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="sendOnChannel5"
+        android:text="MESSAGING STYLE" />
 
 </LinearLayout>

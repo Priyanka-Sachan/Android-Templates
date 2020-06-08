@@ -3,26 +3,36 @@ package com.example.notify_1;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.app.Person;
+import androidx.core.app.RemoteInput;
 
 import android.app.Notification;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.view.View;
 import android.widget.EditText;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.example.notify_1.App.CHANNEL_1_ID;
 import static com.example.notify_1.App.CHANNEL_2_ID;
 import static com.example.notify_1.App.CHANNEL_3_ID;
 import static com.example.notify_1.App.CHANNEL_4_ID;
+import static com.example.notify_1.App.CHANNEL_5_ID;
 
 public class MainActivity extends AppCompatActivity {
 
     public static final int NOTIFICATION_INTENT = 1;
+    public static final String KEY_REMOTE_INPUT = "key_remote_input";
+    public static final String USER_NAME="ME";
 
     //NotificationManagerCompat used here to allow backwards compatibility.
     NotificationManagerCompat notificationManagerCompat;
@@ -32,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
 
     private MediaSessionCompat mediaSessionCompat;
 
+    static List<Message> MESSAGES=new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,8 +51,13 @@ public class MainActivity extends AppCompatActivity {
         editTextTitle = (EditText) findViewById(R.id.edit_text_title);
         editTextMessage = (EditText) findViewById(R.id.edit_text_message);
 
-        mediaSessionCompat=new MediaSessionCompat(this,"TAG");
+        mediaSessionCompat = new MediaSessionCompat(this, "TAG");
         notificationManagerCompat = NotificationManagerCompat.from(this);
+
+        MESSAGES.add(new Message("Hello!!!","JAM"));
+        MESSAGES.add(new Message("Hello2!!!","JAM"));
+        MESSAGES.add(new Message("How r u??!!!",USER_NAME));
+        MESSAGES.add(new Message("We r fine..U??","HARRY"));
     }
 
     public void sendOnChannel1(View v) {
@@ -131,17 +148,75 @@ public class MainActivity extends AppCompatActivity {
                 .setContentTitle(Title)
                 .setContentText(Message)
                 .setLargeIcon(artWork)
-                .addAction(R.drawable.ic_dislike, "Dislike", null)
+                .addAction(R.drawable.ic_dislike, "Dislike", null) //intent canb added here instead of null
                 .addAction(R.drawable.ic_previous, "Previous", null)
                 .addAction(R.drawable.ic_pause, "Pause", null)
                 .addAction(R.drawable.ic_next, "Next", null)
                 .addAction(R.drawable.ic_like, "Like", null)
                 .setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
                         .setShowActionsInCompactView(1, 2, 3)
-                .setMediaSession(mediaSessionCompat.getSessionToken())) //gets media session control for notification.
+                        .setMediaSession(mediaSessionCompat.getSessionToken())) //gets media session control for notification.
                 .setSubText("Sub Text")
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .build();
         notificationManagerCompat.notify(4, notification);
+    }
+
+    public void sendOnChannel5(View v){
+        sendMessageChannel(this);
+    }
+
+    public static void sendMessageChannel(Context context) {
+
+        //For opening activity
+        Intent activityIntent = new Intent(context, MainActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(context, NOTIFICATION_INTENT, activityIntent, 0);
+
+        RemoteInput remoteInput=new RemoteInput.Builder(KEY_REMOTE_INPUT)
+                .setLabel("Your reply....")
+                .build();
+
+        Intent replyIntent;
+        PendingIntent replyPendingIntent =null;
+        if(Build.VERSION.SDK_INT>-Build.VERSION_CODES.N){
+            replyIntent=new Intent(context,NotificationReceiver.class);
+            replyPendingIntent =PendingIntent.getBroadcast(context,NOTIFICATION_INTENT,replyIntent,0);
+        }
+        else{
+            //start chat Activity instead(PendingIntent.getActivity)
+            //cancel notification with notificationManagerCompat.cancel(id)
+        }
+
+        NotificationCompat.Action replyAction=new NotificationCompat.Action.Builder(
+                R.drawable.ic_next,
+                "REPLY",
+                replyPendingIntent
+        ).addRemoteInput(remoteInput).build();
+
+        Person user = new Person.Builder()
+                .setName("ME")
+                .build();
+        NotificationCompat.MessagingStyle messagingStyle=new NotificationCompat.MessagingStyle(user);
+        messagingStyle.setConversationTitle("GROUP CHAT");
+
+        for (Message message:MESSAGES){
+            NotificationCompat.MessagingStyle.Message notification_message=new NotificationCompat.MessagingStyle.Message(
+                    message.getText(),
+                    message.getTimestamp(),
+                    message.getSender()
+            );
+            messagingStyle.addMessage(notification_message);
+        }
+
+        Notification notification = new NotificationCompat.Builder(context, CHANNEL_5_ID)
+                .setSmallIcon(R.drawable.ic_one)
+                .setStyle(messagingStyle)
+                .addAction(replyAction)
+                .setColor(Color.BLUE)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setContentIntent(contentIntent)
+                .build();
+        NotificationManagerCompat notificationManagerCompat=NotificationManagerCompat.from(context);
+        notificationManagerCompat.notify(5, notification);
     }
 }
